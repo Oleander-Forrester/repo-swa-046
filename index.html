@@ -1,26 +1,58 @@
-<script>
-    async function hitung() {
-        const jml = document.getElementById('jumlah').value;
-        const jns = document.getElementById('jenis').value;
-        const resDiv = document.getElementById('result');
-        
-        // Perhatiin tanda BACKTICK ( ` ) di awal ama akhir URL!
-        const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}`;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Estimasi Biaya Konsumsi - Jek</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 50px; background: #121212; color: white; }
+        .card { background: #1e1e1e; padding: 25px; border-radius: 10px; border: 1px solid #333; max-width: 500px; margin: auto; }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #252525; color: white; box-sizing: border-box; }
+        button { background: #0078d4; cursor: pointer; font-weight: bold; border: none; }
+        button:hover { background: #005a9e; }
+        #result { margin-top: 20px; padding: 15px; background: #2d2d2d; border-radius: 5px; display: none; border-left: 5px solid #0078d4; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Kalkulator Biaya Konsumsi</h2>
+        <p><small>Praktikum Komputasi Awan - 046</small></p>
+        <input type="number" id="jumlah" placeholder="Jumlah Peserta" value="40">
+        <select id="jenis">
+            <option value="snack">Snack (15rb)</option>
+            <option value="makan">Makan (30rb)</option>
+            <option value="lengkap">Lengkap (45rb)</option>
+        </select>
+        <button onclick="hitung()">Hitung Estimasi</button>
+        <div id="result"></div>
+    </div>
 
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) throw new Error('Servernya ngambek');
+    <script>
+        async function hitung() {
+            const jml = document.getElementById('jumlah').value;
+            const jns = document.getElementById('jenis').value;
+            const resDiv = document.getElementById('result');
             
-            const data = await response.json();
-            resDiv.style.display = 'block';
-            resDiv.innerHTML = `
-                <strong>Total: Rp${data.total.toLocaleString()}</strong><br>
-                <small>Harga per peserta: Rp${data.hargaPerPeserta.toLocaleString()}</small><br>
-                <small>Time: ${data.timestamp}</small>
-            `;
-        } catch (err) {
-            console.error(err);
-            alert('Gagal nembak API. Pastiin App Service udah nyala dan CORS udah di-set ke *');
+            // URL App Service lu
+            const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}`;
+
+            try {
+                resDiv.style.display = 'block';
+                resDiv.innerHTML = 'Loading...';
+                
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error('CORS belum di-set atau App Service mati');
+                
+                const data = await response.json();
+                resDiv.innerHTML = `
+                    <h3 style="margin:0">Total: Rp${data.total.toLocaleString('id-ID')}</h3>
+                    <p style="margin:5px 0 0 0"><small>Detail: ${data.jumlah} ${data.jenis} @Rp${data.hargaPerPeserta.toLocaleString('id-ID')}</small></p>
+                    <p style="margin:5px 0 0 0; font-size: 10px; color: #888;">TS: ${data.timestamp}</p>
+                `;
+            } catch (err) {
+                resDiv.innerHTML = `<span style="color: #ff5555;">Error: ${err.message}</span>`;
+                console.error(err);
+            }
         }
-    }
-</script>
+    </script>
+</body>
+</html>
