@@ -30,8 +30,7 @@
             const jns = document.getElementById('jenis').value;
             const resDiv = document.getElementById('result');
             
-            // Ganti baris apiUrl di index.html lu jadi ini:
-            const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}`;
+            const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}';
 
             try {
                 const response = await fetch(apiUrl);
