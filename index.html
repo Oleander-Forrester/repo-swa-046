@@ -1,50 +1,26 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Estimasi Biaya Konsumsi</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 50px; background: #121212; color: white; }
-        .card { background: #1e1e1e; padding: 25px; border-radius: 10px; border: 1px solid #333; max-width: 500px; }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #252525; color: white; }
-        button { background: #0078d4; cursor: pointer; font-weight: bold; }
-        #result { margin-top: 20px; padding: 15px; background: #2d2d2d; border-radius: 5px; display: none; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <h2>Kalkulator Biaya Konsumsi</h2>
-        <input type="number" id="jumlah" placeholder="Jumlah Peserta">
-        <select id="jenis">
-            <option value="snack">Snack (15rb)</option>
-            <option value="makan">Makan (30rb)</option>
-            <option value="lengkap">Lengkap (45rb)</option>
-        </select>
-        <button onclick="hitung()">Hitung Estimasi</button>
-        <div id="result"></div>
-    </div>
+<script>
+    async function hitung() {
+        const jml = document.getElementById('jumlah').value;
+        const jns = document.getElementById('jenis').value;
+        const resDiv = document.getElementById('result');
+        
+        // Perhatiin tanda BACKTICK ( ` ) di awal ama akhir URL!
+        const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}`;
 
-    <script>
-        async function hitung() {
-            const jml = document.getElementById('jumlah').value;
-            const jns = document.getElementById('jenis').value;
-            const resDiv = document.getElementById('result');
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Servernya ngambek');
             
-            const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}';
-
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                resDiv.style.display = 'block';
-                resDiv.innerHTML = `
-                    <strong>Total: Rp${data.total.toLocaleString()}</strong><br>
-                    <small>Harga per peserta: Rp${data.hargaPerPeserta.toLocaleString()}</small><br>
-                    <small>Time: ${data.timestamp}</small>
-                `;
-            } catch (err) {
-                alert('Gagal nembak API. Cek CORS atau URL lu.');
-            }
+            const data = await response.json();
+            resDiv.style.display = 'block';
+            resDiv.innerHTML = `
+                <strong>Total: Rp${data.total.toLocaleString()}</strong><br>
+                <small>Harga per peserta: Rp${data.hargaPerPeserta.toLocaleString()}</small><br>
+                <small>Time: ${data.timestamp}</small>
+            `;
+        } catch (err) {
+            console.error(err);
+            alert('Gagal nembak API. Pastiin App Service udah nyala dan CORS udah di-set ke *');
         }
-    </script>
-</body>
-</html>
+    }
+</script>
