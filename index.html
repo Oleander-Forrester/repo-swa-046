@@ -32,15 +32,14 @@
             const jns = document.getElementById('jenis').value;
             const resDiv = document.getElementById('result');
             
-            // URL App Service lu
-            const apiUrl = `https://app-serverless-046-d3guf0fsaehxaxfa.indonesiacentral-01.azurewebsites.net/estimasi?jumlah=${jml}&jenis=${jns}`;
+            const apiUrl = `https://func-serverless-046.azurewebsites.net/api/HttpPraktikum?jumlah=${jml}&jenis=${jns}`;
 
             try {
                 resDiv.style.display = 'block';
                 resDiv.innerHTML = 'Loading...';
                 
                 const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('CORS belum di-set atau App Service mati');
+                if (!response.ok) throw new Error('CORS Error atau Function App mati');
                 
                 const data = await response.json();
                 resDiv.innerHTML = `
